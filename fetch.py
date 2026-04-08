@@ -35,4 +35,21 @@ def fetch_headlines(query: str, days_back: int = 7, page_size: int = 100) -> pd.
         "apiKey": API_KEY,
     }
  
+    response = requests.get(BASE_URL, params=params, timeout=10)
+    response.raise_for_status()
  
+    data = response.json()
+    articles = data.get("articles", [])
+ 
+    if not articles:
+        return pd.DataFrame()
+ 
+    rows = []
+    for article in articles:
+        rows.append({
+            "title": article.get("title", ""),
+            "description": article.get("description", ""),
+            "published_at": article.get("publishedAt", ""),
+            "source": article.get("source", {}).get("name", "Unknown"),
+            "url": article.get("url", ""),
+        })
