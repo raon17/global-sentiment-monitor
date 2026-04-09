@@ -53,3 +53,18 @@ def fetch_headlines(query: str, days_back: int = 7, page_size: int = 100) -> pd.
             "source": article.get("source", {}).get("name", "Unknown"),
             "url": article.get("url", ""),
         })
+
+    df = pd.DataFrame(rows)
+    df["published_at"] = pd.to_datetime(df["published_at"], utc=True, errors="coerce")
+    df = df.dropna(subset=["published_at"])
+    df["date"] = df["published_at"].dt.date
+    df["text"] = df["title"].fillna("") + " " + df["description"].fillna("")
+    df["text"] = df["text"].str.strip()
+
+    return df
+
+def get_available_countries() -> list:
+    return list(COUNTRY_QUERIES.keys())
+
+
+
