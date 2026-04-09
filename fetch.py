@@ -66,5 +66,10 @@ def fetch_headlines(query: str, days_back: int = 7, page_size: int = 100) -> pd.
 def get_available_countries() -> list:
     return list(COUNTRY_QUERIES.keys())
 
+def resolve_query(topic: str, country: str) -> str:
+    base = COUNTRY_QUERIES.get(country, country)
+    if topic.strip():
+        return f"{topic} {base}"
+    return base
 
 
